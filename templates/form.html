@@ -1,0 +1,28 @@
+<div class="row g-2">
+  <div class="col-6">
+    <input type="text" name="license" value="{{ u[1] if u else '' }}" class="form-control" placeholder="License" required>
+  </div>
+  <div class="col-6">
+    <input type="text" name="company" value="{{ u[2] if u else '' }}" class="form-control" placeholder="Company" required>
+  </div>
+  <div class="col-6">
+    <input type="text" name="username" value="{{ u[3] if u else '' }}" class="form-control" placeholder="Username" required>
+  </div>
+  <div class="col-6">
+    <input type="text" name="password" value="{{ u[4] if u else '' }}" class="form-control" placeholder="Password" required>
+  </div>
+  <div class="col-6">
+    <select name="role" class="form-select" required>
+      <option value="">Role</option>
+      <option value="admin" {% if u and u[5]=='admin' %}selected{% endif %}>Admin</option>
+      <option value="agent" {% if u and u[5]=='agent' %}selected{% endif %}>Agent</option>
+    </select>
+  </div>
+  <div class="col-6">
+    <select name="status" class="form-select" required>
+      <option value="">Status</option>
+      <option value="active" {% if u and u[6]=='active' %}selected{% endif %}>Active</option>
+      <option value="inactive" {% if u and u[6]=='inactive' %}selected{% endif %}>In-active</option>
+    </select>
+  </div>
+</div>

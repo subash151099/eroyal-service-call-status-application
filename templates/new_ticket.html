@@ -1,0 +1,299 @@
+{% extends 'agent_dashboard.html' %}
+{% block title %}View Data{% endblock %}
+{% block content %}
+
+<div class="container my-1">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+
+    <h4>Hey, {{username}}!</h4>
+    <p>It's Call Status Entry Form</p>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Bundle JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .nav-item .nav-link {
+      font-weight: 500;
+    }
+
+    .user-info {
+      font-size: 0.9rem;
+      color: #fff;
+      background: #198754;
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-left: auto;
+      margin-right: 10px;
+    }
+</style>
+<div class="card shadow-lg border-0 mb-4">
+
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('new_ticket') }}">
+      
+      <!-- Line 1 -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label required">Date</label>
+          <input type="date" class="form-control" name="date" id="date" readonly value="{{ current_date }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label required">Time</label>
+          <input type="time" class="form-control" name="time" id="time" readonly value="{{ current_time }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Ticket No</label>
+          <input type="text" class="form-control" name="ticket_no" id="ticket_no" placeholder="Optional">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Ref Ticket No</label>
+          <input type="text" class="form-control" name="ref_ticket_no" id="ref_ticket_no" placeholder="Optional">
+        </div>
+      </div>
+
+      <!-- Line 2 -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label required">Company License <span class="text-danger">*</span></label>
+          <input list="licenses" class="form-control" name="license" id="license" required>
+          <datalist id="licenses">
+            {% for row in licenses %}
+              <option value="{{ row.license }}">{{ row.license }} - {{ row.company }}</option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Company Name</label>
+          <input type="text" class="form-control" name="company_name" id="company_name" readonly>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Company Server</label>
+          <input type="text" class="form-control" name="company_server" id="company_server" readonly>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label required">Contact Number <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="contact" id="contact" pattern="\d{10}" maxlength="10" required>
+        </div>
+      </div>
+
+      <!-- Line 3 -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label required">Language <span class="text-danger">*</span></label>
+          <select class="form-select" name="language" id="language" required>
+            <option value="">Choose...</option>
+            <option>Tamil</option>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Malayalam</option>
+            <option>Telugu</option>
+            <option>Kannadam</option>
+            <option>NA</option>
+          </select>
+        </div>
+        
+        <div class="mb-3 col-md-3">
+          <label for="queryType" class="form-label">Query Type <span class="text-danger">*</span></label>
+          <input class="form-control" list="queryTypeOptions" id="query_type" name="query_type" placeholder="Select or type..." required>
+          <datalist id="queryTypeOptions">
+            <option value="Issue">
+            <option value="Doubt">
+            <option value="Traning">
+            <option value="Enquiry">
+            <option value="Requirement">
+            <option value="AMC">
+            <option value="DSC Tool">
+            <option value="Outbound Call">
+            <option value="Missed Call">
+            <option value="Call Forwarded">
+            <option value="Amendment/Supplement/Deletion">
+            <option value="Other">
+            <option value="NA">
+          </datalist>
+        </div>
+
+        <div class="mb-3 col-md-3">
+          <label for="query" class="form-label">Query <span class="text-danger">*</span></label>
+          <input class="form-control" list="queryOptions" id="query" name="query" placeholder="Select or type..." required>
+          <datalist id="queryOptions">
+            <!-- Will be populated by JS -->
+          </datalist>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label required">Status <span class="text-danger">*</span></label>
+          <select class="form-select" name="status" id="status" required>
+            <option value="">Choose...</option>
+            <option>Completed</option>
+            <option>Underprocessing</option>
+            <option>Informed to Dev Team</option>
+            <option>Informed to Sales Team</option>
+            <option>Informed to Accounts Team</option>
+            <option>Other</option>
+            <option>NA</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Call Duration</label>
+          <input type="text" class="form-control" name="duration" id="duration" placeholder="Duration" required>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label d-block">Ratings Applicable</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="ratingToggle">
+                <label class="form-check-label" for="ratingToggle">Enable Ratings</label>
+            </div>
+        </div>
+
+        <!-- ⭐ Ratings Section (initially hidden) -->
+        <div class="col-md-3 mt-2" id="ratingContainer" style="display: none;">
+        <label class="form-label">Customer Rating</label>
+        <div class="d-flex gap-1">
+            <!-- You can also use Font Awesome or Unicode stars -->
+            <input class="btn-check" type="radio" name="rating" id="star1" value="1">
+            <label class="btn btn-outline-warning" for="star1">⭐</label>
+
+            <input class="btn-check" type="radio" name="rating" id="star2" value="2">
+            <label class="btn btn-outline-warning" for="star2">⭐</label>
+
+            <input class="btn-check" type="radio" name="rating" id="star3" value="3">
+            <label class="btn btn-outline-warning" for="star3">⭐</label>
+
+            <input class="btn-check" type="radio" name="rating" id="star4" value="4">
+            <label class="btn btn-outline-warning" for="star4">⭐</label>
+
+            <input class="btn-check" type="radio" name="rating" id="star5" value="5">
+            <label class="btn btn-outline-warning" for="star5">⭐</label>
+        </div>
+        </div>
+      </div>
+
+      <!-- Line 4 -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="desc" id="desc" rows="2" placeholder="Optional"></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Remarks</label>
+          <textarea class="form-control" name="remarks" id="remarks" rows="2" placeholder="Optional"></textarea>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="text-end">
+        <button type="reset" class="btn btn-danger me-2">Clear</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Auto-fill company name -->
+<script>
+  document.getElementById("license").addEventListener("input", function () {
+  const license = this.value;
+
+  fetch("/get_company_details", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ license: license })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      document.getElementById("company_name").value = data.company_name;
+      document.getElementById("company_server").value = data.company_server;
+    } else {
+      document.getElementById("company_name").value = '';
+      document.getElementById("company_server").value = '';
+    }
+  });
+});
+
+  document.getElementById('ratingToggle').addEventListener('change', function () {
+    const ratingContainer = document.getElementById('ratingContainer');
+    if (this.checked) {
+      ratingContainer.style.display = 'block';
+    } else {
+      ratingContainer.style.display = 'none';
+      // Optional: uncheck stars if turned off
+      document.querySelectorAll('input[name="rating"]').forEach(el => el.checked = false);
+    }
+  });
+
+  const queryTypeToQueries = {
+    "Issue": ["Error Code", "Export Error", "Field validation", "Header validation", "Server Issue", "General Page", "IGM Page", "Container Page", "Bond Page", "Certificate Page", "Invoice Page"
+    ,"Supplier Page", "Third Party", "Item Page", "IGST Page", "Single Window", "Supporting Doc", "Checklist", "Submission Page", "E-Way Bill", "Report", "Tracking (Mail/IRN)", "Annexure C1"
+    ,"Annexure C", "ETP", "DTA", "Billing", "Accounts", "Freight", "SCMTR", "Other"],
+    "Doubt": ["Error Code", "Export Error", "Field validation", "Header validation", "Server Issue", "General Page", "IGM Page", "Container Page", "Bond Page", "Certificate Page", "Invoice Page"
+    ,"Supplier Page", "Third Party", "Item Page", "IGST Page", "Single Window", "Supporting Doc", "Checklist", "Submission Page", "E-Way Bill", "Report", "Tracking (Mail/IRN)", "Annexure C1"
+    ,"Annexure C", "ETP", "DTA", "Billing", "Accounts", "Freight", "SCMTR", "Other"],
+    "Traning": ["CHA Import", "CHA Export", "SEZ Import", "SEZ Export", "Freight", "SCMTR", "Other"],
+    "Enquiry": ["CHA Import", "CHA Export", "SEZ Import", "SEZ Export", "Freight", "SCMTR", "Other"],
+    "Requirement": ["CHA Import", "CHA Export", "SEZ Import", "SEZ Export", "Freight", "SCMTR", "Other"],
+    "AMC": ["CHA Import", "CHA Export", "SEZ Import", "SEZ Export", "Freight", "SCMTR", "Royal", "Other"],
+    "DSC Tool": ["DSC Installation", "DSC Settings Configuration", "Signing Failed Issue", "Pendrive Installation", "PKI Component", "Other Query"],
+    "Outbound Call": ["Return Call to Inform Client", "Missed Call so Return Call", "Call to Client", "Testing", "Other"],
+    "Missed Call": ["Call Software Issue", "Network Issue", "Forward Issue", "Other"],
+    "Call Forwarded": ["Forward to other agent", "Other"],
+    "Amendment/Supplement/Deletion": ["IGM", "Invoice", "Supporting Doc", "BE Amendment", "Item", "Container", "Other"],
+    "Other": ["Other"],
+    "NA": ["NA"]
+  };
+
+  document.getElementById('query_type').addEventListener('input', function () {
+    const selectedType = this.value;
+    const queryOptions = document.getElementById('queryOptions');
+    
+    // Clear existing options
+    queryOptions.innerHTML = "";
+
+    // Add new options
+    if (queryTypeToQueries[selectedType]) {
+      queryTypeToQueries[selectedType].forEach(query => {
+        const option = document.createElement("option");
+        option.value = query;
+        queryOptions.appendChild(option);
+      });
+    }
+  });
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'admin_dashboard.html' %}
+{% block title %}Company List{% endblock %}
+{% block content %}
+<style>
+  .table-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+th, td {
+  white-space: nowrap;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+thead th {
+  background-color: #343a40;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.btn-outline-success, .btn-outline-primary {
+  font-weight: 500;
+  border-radius: 20px;
+}
+
+.table td, .table th {
+  padding: 0.75rem 1rem;
+  font-size: 14px;
+}
+
+</style>
+<div class="container mt-5">
+<h5 class="mt-5">📂 Backup History</h5>
+<div class="table-responsive border rounded shadow-sm table-container">
+    <table class="table table-bordered table-hover align-middle mb-0">
+  <thead class="table">
+    <tr>
+      <th>#</th>
+      <th>Filename</th>
+      <th>Date & Time</th>
+      <th>Downloaded By</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in history %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ row.filename }}</td>
+      <td>{{ row.backup_date }}</td>
+      <td>{{ row.username }}</td>
+      <td><a href="{{ url_for('static', filename='backups/' ~ row.filename) }}" class="btn btn-sm btn-success" download><i class="bi bi-arrow-down-circle"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+</div>
+
+{% endblock %}

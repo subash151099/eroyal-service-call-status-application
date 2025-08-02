@@ -1,0 +1,160 @@
+{% extends 'admin_dashboard.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+
+<div class="container fluid">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!--div class="container mt-4"-->
+  <div class="d-flex justify-content-between flex-wrap align-items-center mb-3 gap-2">
+    <h4 class="fw-bold">👥 Manage Users</h4>
+    <div class="d-flex flex-wrap gap-2">
+      <input type="text" class="form-control" id="searchInput" placeholder="Search user..." style="min-width: 200px;">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+        <i class="bi bi-person-plus-fill me-1"></i> Add User
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive border rounded shadow-sm">
+    <table class="table table-hover align-middle table-bordered mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>License</th>
+          <th>Company</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userTable">
+        {% for u in users %}
+        <tr class="text-center">
+          <td>{{ loop.index }}</td>
+          <td>{{ u[1] }}</td>
+          <td>{{ u[2] }}</td>
+          <td>{{ u[3] }}</td>
+          <td>{{ u[4] }}</td>
+          <td>{{ u[5] }}</td>
+          <td>
+            <span class="badge {% if u[6] == 'active' %}bg-success{% else %}bg-danger{% endif %}">
+              {{ u[6] }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal{{ u[0] }}">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <a href="/delete_user/{{ u[0] }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this user?')">
+              <i class="bi bi-trash-fill"></i>
+            </a>
+          </td>
+        </tr>
+
+        <!-- Edit User Modal -->
+        <div class="modal fade" id="editUserModal{{ u[0] }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form action="/update_user/{{ u[0] }}" method="POST">
+                <div class="modal-header bg-warning text-dark">
+                  <h5 class="modal-title"><i class="bi bi-pencil-square me-1"></i> Edit User</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-2">
+                  <div class="col-md-6"><input name="license" class="form-control" value="{{ u[1] }}" required></div>
+                  <div class="col-md-6"><input name="company" class="form-control" value="{{ u[2] }}" required></div>
+                  <div class="col-md-6"><input name="username" class="form-control" value="{{ u[3] }}" required></div>
+                  <div class="col-md-6"><input name="password" class="form-control" value="{{ u[4] }}" required></div>
+                  <div class="col-md-6">
+                    <select name="role" class="form-select" required>
+                      <option value="admin" {% if u[5]=='admin' %}selected{% endif %}>Admin</option>
+                      <option value="agent" {% if u[5]=='agent' %}selected{% endif %}>Agent</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <select name="status" class="form-select" required>
+                      <option value="active" {% if u[6]=='active' %}selected{% endif %}>Active</option>
+                      <option value="inactive" {% if u[6]=='inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-warning">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/add_user" method="POST">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title"><i class="bi bi-person-plus me-1"></i> Add User</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-2">
+          <div class="col-md-6"><input name="license" class="form-control" placeholder="License" required></div>
+          <div class="col-md-6"><input name="company" class="form-control" placeholder="Company" required></div>
+          <div class="col-md-6"><input name="username" class="form-control" placeholder="Username" required></div>
+          <div class="col-md-6"><input name="password" class="form-control" placeholder="Password" required></div>
+          <div class="col-md-6">
+            <select name="role" class="form-select" required>
+              <option value="">Select Role</option>
+              <option value="admin">Admin</option>
+              <option value="agent">Agent</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <select name="status" class="form-select" required>
+              <option value="">Select Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success">Add User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Live search filter
+  document.getElementById("searchInput").addEventListener("input", function () {
+    const search = this.value.toLowerCase();
+    document.querySelectorAll("#userTable tr").forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(search) ? "" : "none";
+    });
+  });
+
+  function togglePassword() {
+  const input = document.getElementById("editPassword");
+  input.type = input.type === "password" ? "text" : "password";
+}
+</script>
+
+{% endblock %}
